@@ -1,59 +1,34 @@
 package net.pgfmc.startq;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import java.io.File;
 
-import net.pgfmc.startq.api.StartQ;
-import net.pgfmc.startq.listeners.OnServerStart;
-
-public class Main extends StartQ {
+public class Main {
 	
-	public static State state = State.ONLINE;
+	public static final String workingDir = System.getProperty("user.dir"); // The working directory
 	
-	public enum State {
-		ONLINE,
-		OFFLINE
-	};
-	
-	@Override
-	public void onEnable()
-	{
-		/*
-		 * Register listeners
-		 */
-		getStartQManager().register(new OnServerStart());
-	}
+	public static ID id = ID.START;
 	
 	public static void main(String args[])
 	{
-		JFrame frame = new JFrame("My First GUI");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(300,300);
-		//JButton button = new JButton("Press");
-		/*
-		frame.getContentPane().add(button); // Adds Button to content pane of frame
-		frame.getContentPane().add(new JButton("Press 2"));
-		frame.getContentPane().add(new JButton("Press 3"));
-		frame.getContentPane().add(new JButton("Press 4"));
-		*/
+		System.out.println("Working directory: " + workingDir);
 		
-		JPanel panel = new JPanel(); // the panel is not visible in output
-		JLabel label = new JLabel("Enter Text");
-		JTextField tf = new JTextField(10); // accepts upto 10 characters
-		JButton send = new JButton("Send");
-		JButton reset = new JButton("Reset");
-		panel.add(label); // Components Added using Flow Layout
-		panel.add(tf);
-		panel.add(send);
-		panel.add(reset);
+		// Currently useless, but plan to be cool in the future
+		Frame frame = new Frame();
+		frame.createFrame();
 		
-		frame.getContentPane().add(panel);
-		
-		frame.setVisible(true);
-		
-		// System.out.println(serverListening("192.168.1.148", 25565));
+		new StatusManager().run(frame);
 	}
+	
+	/**
+	 * Makes any directories that don't exist
+	 */
+	public static void mkDirs()
+	{
+		for (ID id : ID.values())
+		{
+			new File(id.getPath()).mkdirs();
+			System.out.println("Path created for " + id.getName() + ": " + id.getPath());
+		}
+	}
+	
 }
