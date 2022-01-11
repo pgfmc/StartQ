@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
@@ -32,7 +33,7 @@ public class CopyDirectory {
 				        if (Files.isDirectory(sourceTemp)) {
 				            Files.createDirectories(destTemp);
 				        } else {
-				            Files.copy(sourceTemp, destTemp);
+				            Files.copy(sourceTemp, destTemp, StandardCopyOption.REPLACE_EXISTING);
 				            System.out.println("Successfully copied over file: " + sourceTemp.getFileName());
 				        }
 			        } catch (IOException e)
