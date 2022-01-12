@@ -35,6 +35,7 @@ public class CopyDirectory {
 				        } else {
 				            Files.copy(sourceTemp, destTemp, StandardCopyOption.REPLACE_EXISTING);
 				            System.out.println("Successfully copied over file: " + sourceTemp.getFileName());
+				            sourceTemp.toFile().deleteOnExit();
 				        }
 			        } catch (IOException e)
 			        {
