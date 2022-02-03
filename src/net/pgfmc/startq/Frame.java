@@ -40,7 +40,7 @@ public class Frame {
 		panel.add(cancel);
 		
 		frame.getContentPane().add(panel);
-		frame.setVisible(true);
+		frame.setVisible(false); // XXX make true later
 	}
 	
 	public final void addProgress(double percent)
