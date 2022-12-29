@@ -1,34 +1,66 @@
 package net.pgfmc.startq;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.util.concurrent.TimeUnit;
+
+import net.pgfmc.startq.actions.Backup;
+import net.pgfmc.startq.actions.QuickFiles;
+import net.pgfmc.startq.actions.Update;
+import net.pgfmc.startq.util.OutputWindow;
 
 public class Main {
 	
-	public static final String workingDir = System.getProperty("user.dir"); // The working directory
+	public static final OutputWindow WINDOW = new OutputWindow(); // The display window
+	public static final String WORKING_DIRECTORY = System.getProperty("user.dir");
+	public static String BACKUP_DIRECTORY;
 	
-	public static ID id = ID.START;
-	
-	public static void main(String args[])
+	public static void main(String args[]) throws InterruptedException
 	{
-		System.out.println("Working directory: " + workingDir);
 		
-		// Currently useless, but plan to be cool in the future
-		Frame frame = new Frame();
-		frame.createFrame();
-		
-		new StatusManager().run(frame);
-	}
-	
-	/**
-	 * Makes any directories that don't exist
-	 */
-	public static void mkDirs()
-	{
-		for (ID id : ID.values())
+		if (args.length != 1)
 		{
-			new File(id.getPath()).mkdirs();
-			System.out.println("Path created for " + id.getName() + ": " + id.getPath());
+			WINDOW.put("Backup directory not found!");
+			WINDOW.put("Please only put the backup directory in the JVM Arguments");
+			
+			WINDOW.put("Closing in 5 seconds...");
+			TimeUnit.SECONDS.sleep(5);
+			
+			System.exit(1); // Turns the program off with error code 1
 		}
+		
+		BACKUP_DIRECTORY = new File(args[0]).getAbsolutePath();
+		
+		// Gets all server jars in the working directory, error if none
+		String[] jarsInWorkingDirectory = new File(WORKING_DIRECTORY).list((directory, filename) -> filename.equals("server.jar"));
+		for (String file : new File(WORKING_DIRECTORY).list())
+		{
+			System.out.println(file);
+		}
+		
+		if (jarsInWorkingDirectory == null)
+		{
+			WINDOW.put("No server found!");
+			WINDOW.put("Place StartQ.jar in the working directory of the server.");
+			
+			WINDOW.put("Closing in 5 seconds...");
+			TimeUnit.SECONDS.sleep(5);
+			
+			System.exit(2); // Turns the program off with error code 2
+		}
+		
+		WINDOW.put("Working directory: " + WORKING_DIRECTORY);
+		WINDOW.put("Backup directory: " + BACKUP_DIRECTORY);
+		
+		new Backup(); // Runs first
+		new QuickFiles(); // Runs second
+		try { new Update(); } catch (MalformedURLException e) { e.printStackTrace(); } // Runs third
+		
+		WINDOW.put("Done! Closing in 5 seconds...");
+		TimeUnit.SECONDS.sleep(5);
+		
+		System.exit(0); // Turns the program off with no error code
+		
 	}
 	
 }
